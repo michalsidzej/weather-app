@@ -3,6 +3,7 @@ const card = document.querySelector('.card')
 const details = document.querySelector('.details')
 const icon = document.querySelector('.icon')
 const timeImg = document.querySelector('.time')
+const forecast = new Forecast()
 
 const updateUI = ({cityDets, weather}) => {
   details.innerHTML = `
@@ -13,7 +14,7 @@ const updateUI = ({cityDets, weather}) => {
       <span>&deg;C</span>
     </div>
   `
-  console.log(weather)
+
   const timeSrc = weather.IsDayTime ? 'img/day.svg' :  'img/night.svg'
 
   timeImg.setAttribute('src', timeSrc)
@@ -25,20 +26,13 @@ const updateUI = ({cityDets, weather}) => {
     card.classList.remove('d-none')
   }
 }
-const updateCity = async city => {
-
-  const cityDets = await getCity(city)
-  const weather = await getCurrentConditions(cityDets.Key)
-
-  return { cityDets, weather }
-}
 
 cityForm.addEventListener('submit', e => {
   e.preventDefault()
   const city = cityForm.city.value.trim()
   cityForm.reset()
 
-  updateCity(city)
+  forecast.updateCity(city)
     .then(data => updateUI(data))
     .catch(err => console.log(err))
 
@@ -46,7 +40,7 @@ cityForm.addEventListener('submit', e => {
 })
 
 if(localStorage.getItem('city')){
-  updateCity(localStorage.getItem('city'))
+  forecast.updateCity(localStorage.getItem('city'))
     .then(data => updateUI(data))
     .catch(err => console.log(err))
 }
